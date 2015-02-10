@@ -1,0 +1,45 @@
+<!--
+Tämä tiedosto on lisensoitu Creative Commons BY-NC-ND 4.0 -lisenssillä. 
+Tarkastele käyttölupaa osoitteessa http://creativecommons.org/licenses/by-nc-nd/4.0/
+	
+Kooditiedoston tekijä: Mikko Nieminen
+Viimeisimmät muutokset: Mikko Nieminen 22.1.2015, Hannu Tuomisto 30.11.2014
+
+Tämä on asetussivun alanäkymä, jossa hallinta tageille
+-->
+
+<div class="jumbotron text-center">
+	<h2>Tagit</h2>
+</div>
+
+<div class="container">
+
+	<div class="row">
+		<div class="col-sm-6 col-sm-offset-3">
+			<!-- Tagin lisäyskenttä -->
+			<form class="input-margin">
+		    <div class="input-group">
+		      <input id="add-tag" type="text" class="form-control" placeholder="Lisää tagi" ng-model='newTag'>
+		      <span class="input-group-btn">
+		      	<button type='submit' class="btn btn-primary" ng-click='addTag(newTag)'> Lisää</button>
+		      </span>
+		    </div>
+		  </form>
+	    
+			<!-- Tagilista -->
+			<table class="table table-hover">
+				<tr ng-repeat='tag in tags'>
+					<td>{{tag.body}}
+						<button class="btn btn-default pull-right glyphicon glyphicon-remove" ng-click='removeTag(tag.id)'></button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+</div>
+
+<!-- Tässä näytetään alertit, kun niitä tulee -->
+<div class="alert_container" ng-repeat="alert in alerts">
+	<alert type="{{alert.type}}">{{alert.msg}}</alert>
+</div>

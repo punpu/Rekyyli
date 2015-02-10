@@ -1,0 +1,45 @@
+<!--
+Tämä tiedosto on lisensoitu Creative Commons BY-NC-ND 4.0 -lisenssillä. 
+Tarkastele käyttölupaa osoitteessa http://creativecommons.org/licenses/by-nc-nd/4.0/
+
+Kooditiedoston tekijä: Eero Vornanen
+Viimeisimmät muutokset: Eero Vornanen 15.11.2014
+
+Tässä on modaalisen muistiinpanoikkunan näkymä.
+-->
+<div class="modal-header">
+ 	<div class="btn-group pull-right">
+  	<button class="btn btn-danger" ng-click="cancel()">
+  		Sulje
+  	</button>
+	</div>
+  <h3 class="modal-title">Hakemuksen {{id}} muistiinpanot</h3>
+</div>
+
+<div class="modal-body">
+	<div class="form-group">
+    <textarea id="add-note" class="form-control" rows="3"placeholder="Lisää muistiinpano" ng-model='newNote'></textarea>
+
+    <div class="btn-group pull-right input-margin">
+  		<button type='submit' class="btn btn-primary" ng-click="addNote(newNote)">Lisää muistiinpano</button>
+    </div>
+  </div>
+
+	<table class='table table-bordered table-hover'>
+    <thead>
+    	<tr>
+        <th>Lisätty</th>
+        <th>Muistiinpano</th>
+        <th>Kirjottaja</th>
+      </tr>
+    </thead>
+
+    <tbody>
+    	<tr ng-repeat="note in notes | orderBy:'-timestamp'">
+        <td>{{note.timestamp | date:'dd.MM.yyyy klo HH:mm'}}</td>
+        <td class="comment">{{note.body}}</td>
+        <td>{{note.writer}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

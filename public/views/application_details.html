@@ -1,0 +1,185 @@
+<!--
+Tämä tiedosto on lisensoitu Creative Commons BY-NC-ND 4.0 -lisenssillä. 
+Tarkastele käyttölupaa osoitteessa http://creativecommons.org/licenses/by-nc-nd/4.0/
+
+Kooditiedoston tekijä: Tuomas Kunnamo
+Viimeisimmät muutokset: Tuomas 13.10.2014, Heikki Känä 28.10.2014, Mikko Nieminen 30.11.2014
+
+Tämä on yhden hakemuksen tietojen näkymä
+-->
+
+<div ng-show="applicationFound">
+
+  <!-- Hakemuksen yksityiskohdat tulevat tähän -->
+  <div class="container container-application">
+    <div class="jumbotron">
+      <div class="row">
+        <!-- Hakemuksen valintanapit -->
+        <div class="btn-group pull-left" ng-show="!modifying_info && user.master">
+          <button class="btn btn-default" ng-click="showModifiableInfo()">Muuta hakemuksen tietoja</button>
+        </div>
+          <!-- Näytetään, kun käyttäjä klikkaa "Muuta hakemuksen tietoja" -->
+        <div class="btn-group pull-left" ng-show="modifying_info && user.master">
+          <button type="button" class="btn btn-default" ng-click="cancelModify()">Peruuta</button>
+          <button type="button" class="btn btn-primary" ng-click="saveModifiedInfo()">Tallenna</button>
+        </div>
+  
+        <div class="btn-group pull-right" ng-show="user.master">
+          <button type="button" class="btn btn-default" data-toggle="modal" data-target="#confirmDelete"> Poista hakemus</button>
+          <a class="btn btn-primary" href="#/vastaa" ng-click='selectOneApplication({ id: application.id, email: application.sender, name: application.name })'> Vastaa hakemukselle</a>
+        </div>
+
+        <!-- Poistodialogi -->
+        <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-body">
+                Haluatko varmasti poistaa hakemuksen?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Ei</button>
+                <button type="button" class="btn btn-primary" ng-click='deleteApplication(application.id)' data-dismiss="modal">Kyllä</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h2> 
+            Hakemus {{application.id}} 
+            
+          </h2>
+          
+          <p >
+            <div class="dropdown" ng-show="user.master"> Kategoria: 
+              <button class="btn btn-xs btn-default dropdown-toggle" type="button"> {{application.category}}
+                <span class="caret"></span> 
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="category in categories">
+                  <a role="menuitem" ng-click="changeCategory(category.id)"> {{category.category}} </a>
+                </li>
+              </ul>
+            </div>
+          </p>
+
+          <p ng-hide="user.master">
+            Kategoria: {{application.category}}
+          </p>
+
+      		<p ng-hide="modifying_info">Hakija: {{application.name}}</p>
+          <p ng-hide="modifying_info">Sähköposti: {{application.sender}}</p>
+
+          <!-- Näytetään, kun käyttäjä klikkaa "Muuta hakemuksen tietoja" -->
+          <div class="form-inline" ng-show="modifying_info">
+            <p>
+              <span >Hakija:</span>
+              <input type="text" class="form-control" ng-model="new_name">
+            </p>
+            <p>
+              <span >Sähköposti:</span>
+              <input type="text" class="form-control" ng-model="new_sender">
+            </p>
+          </div>
+
+          <p>
+            <div class="dropdown" ng-show="user.master"> Pesti: 
+              <button class="btn btn-xs btn-default dropdown-toggle" type="button"> {{application.job_alias}}
+                <span class="caret"></span> 
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="job in jobs">
+                  <a role="menuitem" ng-click="changeJob(job.id)" href=""> {{job.alias}} </a>
+                </li>
+              </ul>
+            </div>
+          </p>
+
+          <p ng-hide="user.master">
+            Pesti: {{application.job_alias}}
+          </p>
+
+      		<p>Saapumisaika: {{application.timestamp | date:'dd.MM.yyyy klo HH:mm'}}</p>
+
+          <div>
+            <!-- Hakemusteksti tulee tähän -->
+            <h4> {{application.subject}} </h4>
+            <p> {{application.body}} </p>
+
+            <h4> Liitteet </h4>
+            <ul>
+              <li ng-repeat='attachment in attachments'><a href='/hakemus/{{application.id}}' ng-click="getAttachment(application.id,attachment.hash)">{{attachment.filename}}</a></li>
+            </ul>
+          </div>
+        </div> <!-- Vasen palkki päättyy -->
+
+        <!-- Oikea palkki -->
+        <div class="col-md-6">
+
+          <!-- Tagien listaus -->
+          <h2>Tagit</h2>
+          <!-- Tagin lisäyskenttä -->
+          <form class="form-group" ng-show="user.master">
+            <div class="input-group">
+              <input id="add-tag" type="text" typeahead="tag for tag in tags | filter:$viewValue | limitTo:8" class="typeahead form-control" placeholder="Lisää tagi" ng-model='newTag' autocomplete="off">
+              <span class="input-group-btn">
+                <button type='submit' class="btn btn-default" ng-click='addTag(application.id, newTag)'> Lisää</button>
+              </span>
+            </div>
+          </form>
+
+          <div ng-repeat='tag in application.tags'>
+            <button type="button" class="btn btn-default btn-xs glyphicon glyphicon-remove" ng-click='deleteTag(application.id, tag)' ng-show="user.master"></button>
+            {{tag}}
+          </div>
+        </div><!-- Oikea palkki päättyy -->
+
+      </div>
+    </div>
+
+    <!-- Muistiinpanot -->
+    <div class='jumbotron' ng-show="user.master">
+      <h2>Muistiinpanot</h2>
+
+      <div class="form-group">
+        <textarea id="add-note" class="form-control" rows="3"placeholder="Lisää muistiinpano" ng-model='newNote'></textarea>
+
+        <div class="btn-group pull-right input-margin">
+          <button type='submit' class="btn btn-primary" ng-click='addNote(application.id, newNote)'>Lisää muistiinpano</button>
+        </div>
+      </div>
+
+      <table class='table table-bordered table-hover'>
+        <thead>
+          <tr>
+            <th>Lisätty</th>
+            <th>Muistiinpano</th>
+            <th>Kirjoittaja</th>
+            <th>Poista</th>
+          </tr>
+          <tr ng-repeat="note in notes | orderBy:'-timestamp'">
+            <td>{{note.timestamp | date:'dd.MM.yyyy klo HH:mm'}}</td>
+            <td class="comment">{{note.body}}</td>
+            <td>{{note.writer}}</td>
+            <td>
+              <button type="button" class="btn btn-default" ng-click='deleteNote(application.id, note.id)'>
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>
+            </td>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+
+  <div ng-hide="applicationFound">
+  	Hakemusta id:llä {{id}} ei löytynyt.
+  </div>
+</div>
+
+<!-- Tässä näytetään alertit, kun niitä tulee -->
+<div class="alert_container" ng-repeat="alert in alerts">
+  <alert type="{{alert.type}}">{{alert.msg}}</alert>
+</div>

@@ -1,0 +1,11 @@
+#!/usr/bin/env nodemon
+
+var app = require('../rekyyli.js');
+var port = 3000;
+
+app.set('port', process.env.PORT || port);
+
+// Käynnistetään palvelin
+var server = app.listen(app.get('port'), function () {
+	console.log('Palvelin käynnissä. Kuunnellaan porttia ' + server.address().port + '.');
+});

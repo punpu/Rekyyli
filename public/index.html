@@ -1,0 +1,132 @@
+<!--
+Tämä tiedosto on lisensoitu Creative Commons BY-NC-ND 4.0 -lisenssillä. 
+Tarkastele käyttölupaa osoitteessa http://creativecommons.org/licenses/by-nc-nd/4.0/
+	
+Kooditiedoston tekijä: Mikko Nieminen
+Viimeisimmät muutokset: Hannu 12.10.2014, Mikko Nieminen 22.1.2015, Eero 15.11, Tuomas Kunnamo 8.1.2015
+
+Sivuston perusnäkymä
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<base href="/">
+
+	<title>Rekyyli</title>
+
+	<!-- CSS Bootstrap -->
+	<link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
+	<!-- CSS Font Awesome -->
+	<link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
+	<!-- CSS Omat kustomoinnit -->
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- JavaScript -->
+	<script src="libs/angular/angular.js"></script>
+	<script src="libs/angular-route/angular-route.min.js"></script>
+
+	<!-- Controllers -->
+	<script src="js/controllers/MainCtrl.js"></script>
+	<script src="js/controllers/Application_detailsCtrl.js"></script>
+	<script src="js/controllers/Settings_mailtemplatesCtrl.js"></script>
+	<script src="js/controllers/Settings_categoriesCtrl.js"></script>
+	<script src="js/controllers/Settings_tagsCtrl.js"></script>
+	<script src="js/controllers/Settings_usermanagerCtrl.js"></script>
+	<script src="js/controllers/ReplyToSelectedCtrl.js"></script>
+	<script src="js/controllers/SettingsJobsCtrl.js"></script>
+	<script src="js/controllers/ModalNotesCtrl.js"></script>
+	<script src="js/controllers/LoginCtrl.js"></script>
+	<!-- Services -->
+	<script src="js/services/ApplicationsService.js"></script>
+	<script src="js/services/CategoriesService.js"></script>
+	<script src="js/services/NotesService.js"></script>
+	<script src="js/services/TagsService.js"></script>
+	<script src="js/services/MailService.js"></script>
+	<script src="js/services/JobsService.js"></script>
+	<script src="js/services/AuthService.js"></script>
+	<script src="js/services/UserService.js"></script>
+	<script src="js/services/AlertService.js"></script>
+	<!-- Routes -->
+	<script src="js/appRoutes.js"></script>
+
+	<script type="text/javascript" src="js/app.js"></script>
+</head>
+
+<body ng-app="RekyyliApp" ng-controller="LoginController">
+<div class="container-fluid" role="navigation">
+	
+	<!-- Navigaatio -->
+	<nav class="navbar navbar-inverse">
+		<div class="navbar-header">
+			<!-- Navipalkin avaus ja sulkunappi -->
+			<button class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/">Rekyyli</a>
+		</div>
+		<div class="collapse navbar-collapse">
+			<ul ng-show="currentUser" class="nav navbar-nav">
+				<li><a href="/">Hakemukset</a></li>
+			  <li><a ng-show="currentUser.master" href="/kategoriat">Kategoriat</a></li>
+			  <li><a ng-show="currentUser.master" href="/tagit">Tagit</a></li>
+			  <li><a ng-show="currentUser.master" href="/sahkopostipohjat">Sähköpostipohjat</a></li>
+			  <li><a ng-show="currentUser.master" href="/pestit">Pestit</a></li>
+			</ul>
+			<ul ng-show="currentUser" class="nav navbar-nav navbar-right">
+			  <li ng-show="userLoggedIn" ng-cloak><a href="/kayttajahallinta">{{currentUser.name}}</a></li>
+			  <li ng-show="userLoggedIn" ng-cloak><a ng-click="logout()">Kirjaudu ulos</a></li>
+			  <li ng-show="userLoggedIn" ng-cloak><a class="glyphicon glyphicon-cog pull-right" href="/kayttajahallinta"></a></li>
+			</ul>
+		</div>
+	</nav>
+
+	<!-- Login -->
+	<div ng-hide="checkSessionLoading" ng-cloak>
+		<div ng-show="!currentUser" class="jumbotron text-center">
+			<div class="row">
+				<div class="col-md-3 col-md-offset-5">
+					<form name="loginForm" ng-submit="login(credentials)" novalidate>
+					  <div class="form-group">
+						  <label for="username">Käyttäjänimi:</label>
+						  <input class="form-control" type="text" id="username"
+						         ng-model="credentials.username">
+					  </div>
+					  <div class="form-group">
+						  <label for="password">Salasana:</label>
+						  <input class="form-control" type="password" id="password"
+						         ng-model="credentials.password">
+						</div>
+					  <div class="btn-group">
+					  	<button class="btn btn-primary" type="submit">Kirjaudu sisään</button>
+					  </div>
+					</form>
+					<div class="alert text-center">
+						<div ng-show="loginAttempts > 0 && !userLoggedIn" class="alert-danger">Virheellinen käyttäjätunnus tai salasana</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Content, näytetään jos kirjauduttu sisään -->
+	<div ng-show="userLoggedIn" ng-view></div>
+
+</div>
+
+  <!-- Bootstrapin core javascriptit -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script> 
+  <!-- angularUtils-directives-dirPagination, hakemustaulukon sivutusmoduulin javascriptit -->
+  <script src="libs/angular-utils-pagination/dirPagination.js"></script>
+  <!-- underscore.js frontendille -->
+  <script src='/libs/underscore/underscore-min.js'></script>
+  <!-- Angular-UI -->
+  <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.2.js"></script>
+  <!-- Angular-UI:n suomenkielinen käännös popup-kalenterille -->
+  <script src="http://code.angularjs.org/1.0.8/i18n/angular-locale_fi-fi.js"></script>
+</body>
+</html>

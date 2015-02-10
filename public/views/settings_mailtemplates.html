@@ -1,0 +1,70 @@
+<!--
+Tämä tiedosto on lisensoitu Creative Commons BY-NC-ND 4.0 -lisenssillä. 
+Tarkastele käyttölupaa osoitteessa http://creativecommons.org/licenses/by-nc-nd/4.0/
+
+Kooditiedoston tekijä: Mikko Nieminen
+Viimeisimmät muutokset: Hannu Tuomisto 26.10.2014, Mikko Nieminen 15.1.2015, Heikki 3.12.2014, Tuomas Kunnamo 10.12.2014
+
+Tämä on asetussivun alanäkymä, jossa hallinta sähköpostipohjille
+-->
+
+<div class="jumbotron text-center">
+	<h2>Sähköpostipohjat</h2>
+</div>
+
+<div class="container">
+
+	<!-- Viestipohjan valinnan container -->
+	<div class="col-sm-4">
+		<h2>Viestipohjat</h2>
+		<!-- Data vielä kovakoodattua -->
+		<table class="table table-hover">
+			<tr ng-repeat="mailtemplate in mailtemplates">
+				<td ng-click="showMailTemplate(mailtemplate)"> {{mailtemplate.title}}
+					<button class="btn btn-default pull-right glyphicon glyphicon-remove" ng-click="removeMailtemplate(mailtemplate.id)"></button>
+				</td>
+			</tr>
+			<tr><td></td></tr>
+		</table>
+	</div>
+
+	<!-- Välipalkki -->
+	<div class="col-sm-1"></div>
+
+	<!-- Viestin kirjoituskentän container -->
+	<div class="col-sm-7">
+		<div class="row input-margin">
+			<div class="col-sm-12 input-margin">
+				<label>Viestipohjan nimi (näkyy vain Rekyylin käyttäjille): </label>
+				<input class="form-control" ng-model="newTemplateTitle" style="width:100%">
+			</div>
+		</div >
+
+		<div class="row input-margin">
+			<div class="col-sm-12 input-margin">
+				<label>Viestipohjan otsikko (näkyy sähköpostin otsikkokentässä): </label>
+				<input class="form-control" ng-model="newTemplateSubject" style="width:100%">
+			</div>
+		</div >
+
+		<!--<div text-angular ng-model="htmlVariable" class="input-margin"></div>-->
+		<label>Sähköpostiviesti </label>
+		 <textarea class="form-control input-margin" rows="15" ng-model='mail_body'></textarea>
+
+		<div class="input-margin">
+			<div class="btn-group pull-left">
+				<button class="btn btn-primary" ng-click="addMailtemplate(mail_body, newTemplateTitle, newTemplateSubject)">Tallenna uutena</button>
+			</div>
+			<div class="btn-group pull-right">
+				<button class="btn btn-default">Peruuta</button>
+				<button class="btn btn-primary" ng-click="editMailtemplate(templateID, newTemplateTitle, newTemplateSubject, mail_body)">Tallenna</button>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<!-- Tässä näytetään alertit, kun niitä tulee -->
+<div class="alert_container" ng-repeat="alert in alerts">
+	<alert type="{{alert.type}}">{{alert.msg}}</alert>
+</div>

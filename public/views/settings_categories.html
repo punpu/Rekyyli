@@ -1,0 +1,51 @@
+<!--
+Tämä tiedosto on lisensoitu Creative Commons BY-NC-ND 4.0 -lisenssillä. 
+Tarkastele käyttölupaa osoitteessa http://creativecommons.org/licenses/by-nc-nd/4.0/
+  
+Kooditiedoston tekijä: Mikko Nieminen
+Viimeisimmät muutokset: Hannu Tuomisto 30.10.2014, Mikko Nieminen 22.1.2015
+
+Tämä on asetussivun alanäkymä, jossa hallinta kategorioille
+-->
+
+<link rel="stylesheet" href="../css/style.css">
+
+<div class="jumbotron text-center">
+	<h2>Kategoriat</h2>
+</div>
+
+<div class="container">
+
+  <div class="row">
+  	<!-- Kategorialistan container -->
+  	<div class="col-sm-6 col-sm-offset-3">
+
+  		<!-- Kategorian lisäyskenttä -->
+      <form class="input-margin">
+        <div class="input-group">
+          <input id="add-category" type="text" class="form-control" placeholder="Lisää kategoria" ng-model='newCategory'>
+          <span class="input-group-btn">
+            <button type='submit' class="btn btn-primary" ng-click='addCategory(newCategory)'> Lisää</button>
+          </span>
+        </div>
+      </form>
+
+      <!-- Kategorialista -->
+  		<table class="table table-hover">
+
+  			<tr ng-repeat="category in categories">
+  				<td ng-click="alert('Kategoria valittu')">{{category.category}}</td> 
+  				<td>
+  					<button ng-click="deleteCategory(category.id)" class="btn btn-default pull-right glyphicon glyphicon-remove"></button>
+  				</td> 
+  			</tr>
+  		</table>
+  	</div>
+  </div>
+
+</div>
+
+<!-- Tässä näytetään alertit, kun niitä tulee -->
+<div class="alert_container" ng-repeat="alert in alerts">
+    <alert type="{{alert.type}}">{{alert.msg}}</alert>
+</div>

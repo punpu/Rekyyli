@@ -1,0 +1,349 @@
+<!--
+Tämä tiedosto on lisensoitu Creative Commons BY-NC-ND 4.0 -lisenssillä. 
+Tarkastele käyttölupaa osoitteessa http://creativecommons.org/licenses/by-nc-nd/4.0/
+
+Kooditiedoston tekijä: Mikko Nieminen
+Viimeisimmät muutokset: Mikko Nieminen 12.12.2014, Eero Vornanen 13.12.2014, Tuomas Kunnamo 12.12.2014
+
+Tämä on pääsivun näkymä
+-->
+
+<div class="jumbotron searchbar">
+
+	<!-- Hakutoiminnot alkavat tästä -->
+	<form ng-model="search_conditions">
+		<div class="row">	
+			<!--Hakuehtojen ensimmäinen sarake -->
+			<div class="col-sm-4 searchcolumn">
+				<div>
+					<label for="wordsearch">Sanahaku: </label><i class="glyphicon glyphicon-question-sign" tooltip="Hakee hakemusviestien otsikoista ja viestirungoista, sekä muistiinpanoista."></i>
+				</div>
+			
+				<div>
+					<input type="text" class="form-control" id="wordsearch" ng-model="search_conditions.wordsearch">
+				</div>
+
+				<div>
+					<label for="job">Pesti: </label>
+				</div>
+
+				<div id="job" class="btn-group dropdown">
+					<!-- Näytetään vaihtoehtoina pestin aliakset, hakuun kuitenkin käytetään pestin sähköpostiosoitetta -->
+					<select class="form-control" ng-model="search_conditions.destination" ng-options="job.email as job.alias for job in jobs">
+						<option value="">Kaikki pestit</option>
+  				</select> 
+				</div>
+
+				<div>
+					<label for="category">Kategoria: </label>
+				</div>
+
+				<div id="category" class="btn-group dropdown">
+					<select class="form-control" ng-model="search_conditions.category_id" ng-options="category.id as category.category for category in categories">
+						<option value="">Kaikki kategoriat</option>
+  				</select> 
+				</div>
+
+				<div>
+					<label for="answered">Vastattu: </label>
+				</div>
+
+				<div id="answered" class="btn-group dropdown">
+					<select class="form-control" ng-model="search_conditions.replysent" ng-init="search_conditions.replysent=''">
+						<option value="">Ohita</option>
+						<option value="true">Kyllä</option>
+						<option value="false">Ei</option>
+  				</select> 
+				</div>
+			</div>
+
+			<!-- Toinen sarake -->
+			<div class="col-sm-4 searchcolumn">
+				<div>
+					<label for="applicant_name">Hakijan nimi: </label>
+					<input type="text" class="form-control" id="applicant_name" ng-model="search_conditions.name" value="">
+				</div>
+
+				<div>
+					<label for="applicant_email">Hakijan sähköpostiosoite: </label>
+					<input type="text" class="form-control" id="applicant_email" ng-model="search_conditions.sender">
+				</div>
+
+				<div>
+					<label for="timespan">Saapunut välillä: </label>
+					<!-- Tässä määritetään angular-ui:n datepickerit, joilla valitaan haun aikaväli. -->
+					<div class="input-group" id="timespan">
+						<!-- Alkupäivän datepicker -->
+	      		<input type="text" class="form-control" datepicker-popup="dd.MM.yyyy" ng-model="search_conditions.datefrom" is-open="beginopened" close-text="Sulje" clear-text="Tyhjennä" current-text="Tänään" datepicker-options="dateOptions" id="begindate" placeholder="pp.kk.vvvv" readonly>
+	      		<span class="input-group-btn">
+	          	<button type="button" class="btn btn-default" ng-click="openCalendar($event, 'beginopened')"><i class="glyphicon glyphicon-calendar"></i></button>
+	      		</span>
+
+	      		<!-- Väliviiva -->
+						<span class="input-group-addon">-</span>
+
+						<!-- Loppupäivän datepicker -->
+	      		<input type="text" class="form-control" datepicker-popup="dd.MM.yyyy" ng-model="search_conditions.dateto" is-open="endopened" close-text="Sulje" clear-text="Tyhjennä" current-text="Tänään" datepicker-options="dateOptions" id="enddate" placeholder="pp.kk.vvvv" readonly>
+	      		<span class="input-group-btn">
+	        		<button type="button" class="btn btn-default" ng-click="openCalendar($event, 'endopened')"><i class="glyphicon glyphicon-calendar"></i></button>
+	      		</span>
+	    		</div>
+
+	    		<div>
+	    			<input type="button" class="btn btn-default pull-right input-margin" value="Tyhjennä aikaväli" ng-click="emptyDates()">
+	    		</div>
+	    	</div>
+		
+			</div>
+
+			<!--Hakuehtojen kolmas sarake -->
+			<div class="col-sm-4 searchcolumn">
+				<div>
+					<label for="tags">Tagit: 
+					</label>
+				</div>
+			
+				<!-- Tagin syöttö hakuparametriksi -->
+				<div>
+					<form class="form-group">
+            <div class="input-group">
+            	<div class="input-group-btn">
+				        <label class="btn btn-default" ng-model="search_conditions.tag_search_mode" btn-radio="'And'">Ja</label>
+				        <label class="btn btn-default" ng-model="search_conditions.tag_search_mode" btn-radio="'Or'">Tai</label>
+					    </div>
+              <input id="add-tag" type="text" typeahead="tag.body for tag in tags | filter:$viewValue | limitTo:8" class="typeahead form-control" ng-model='newTag' autocomplete="off">
+              <span class="input-group-btn">
+                <button type='submit' class="btn btn-default" ng-click='addTag(newTag)'> Lisää</button>
+              </span>
+            </div>
+          </form>
+				</div>
+
+				<div>
+					<label for="taglist">Valitut tagit:</label>
+					<!-- Listataan perään hakuparametreissa tallessa olevat tagit -->
+					<div ng-repeat="search_tag in search_tags">
+	          <button type="button" class="btn btn-default btn-xs glyphicon glyphicon-remove" ng-click='removeSearchTag(search_tag)'></button>
+	          {{search_tag}}
+	        </div>
+	      </div>
+			</div>
+
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="btn-group pull-right pull-down">
+					<a class="btn btn-default" ng-click="emptySearch()">Tyhjennä</a>
+					<a class="btn btn-primary" type="submit" ng-click="search()">Etsi</a>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<!-- Sivutuksen controlli, eli millä sivulla ollaan, sivunvaihdon painikkeet.  -->
+<dir-pagination-controls boundary-links="true" class="pagination" on-page-change="pageChangeHandler(newPageNumber)" template-url="/views/dirPagination.tpl.html">
+</dir-pagination-controls>
+Hakemuksia sivulla:
+<a href="" ng-click="changePageSize(10)">10</a>,
+<a href="" ng-click="changePageSize(25)">25</a>,
+<a href="" ng-click="changePageSize(50)">50</a>,
+<a href="" ng-click="changePageSize(100)">100</a>,
+<a href="" ng-click="changePageSize(total_applications)">kaikki ({{total_applications}})</a>
+
+<!-- Hakemustaulukko -->
+<table class="table table-bordered table-hover applications-table">
+	<thead>
+		<tr>
+			<th><input type="checkbox" ng-model="selectedAll" ng-click="selectAll()"></th>
+			<th>
+				<a href='#' ng-click="orderBy('category')">
+					Kategoria
+					<span ng-show="orderByField=='category'">
+						<span class="glyphicon glyphicon-chevron-up" ng-show="!reverseOrder"></span>
+						<span class="glyphicon glyphicon-chevron-down" ng-show="reverseOrder"></span>
+					</span>
+				</a>
+			</th>
+			<th>
+				<a href='#' ng-click="orderBy('timestamp')">
+					Saapumisaika
+					<span ng-show="orderByField=='timestamp'">
+						<span class="glyphicon glyphicon-chevron-up" ng-show="!reverseOrder"></span>
+						<span class="glyphicon glyphicon-chevron-down" ng-show="reverseOrder"></span>
+					</span>
+				</a>
+			</th>
+			<th>
+				<a href='#' ng-click="orderBy('subject')">
+					Otsikko
+					<span ng-show="orderByField=='subject'">
+						<span class="glyphicon glyphicon-chevron-up" ng-show="!reverseOrder"></span>
+						<span class="glyphicon glyphicon-chevron-down" ng-show="reverseOrder"></span>
+					</span>
+				</a>
+			</th>
+			<th>
+				<a href='#' ng-click="orderBy('name')">
+					Hakija
+					<span ng-show="orderByField=='name'">
+						<span class="glyphicon glyphicon-chevron-up" ng-show="!reverseOrder"></span>
+						<span class="glyphicon glyphicon-chevron-down" ng-show="reverseOrder"></span>
+					</span>
+				</a>
+			</th>
+			<th>
+				<a href='#' ng-click="orderBy('destination')">
+					Pesti
+					<span ng-show="orderByField=='destination'">
+						<span class="glyphicon glyphicon-chevron-up" ng-show="!reverseOrder"></span>
+						<span class="glyphicon glyphicon-chevron-down" ng-show="reverseOrder"></span>
+					</span>
+				</a>
+			</th>
+
+			<th>
+				<a href='#' ng-click="orderBy('replysent')">
+					Vastattu
+					<span ng-show="orderByField=='replysent'">
+						<span class="glyphicon glyphicon-chevron-up" ng-show="!reverseOrder"></span>
+						<span class="glyphicon glyphicon-chevron-down" ng-show="reverseOrder"></span>
+					</span>
+				</a>
+			</th>
+			<th>
+				Pikapainikkeet
+			</th>
+		</tr>
+	</thead>
+
+	<i class="fa fa-spinner fa-spin fa-3x" ng-show="applications_list_loading"></i>
+	<tbody dir-paginate="application in applications | itemsPerPage: page_size | orderBy:orderByField:reverseOrder | filter:table_filter" current-page="current_page" total-items="total_applications" ng-hide="applications_list_loading">
+
+			<tr>
+				<!-- Checkbox rivin valinnalle -->
+				<td>
+					<input type="checkbox" ng-model="application_row" ng-checked="isSelected( application.id )" ng-click="toggleSelection({ id: application.id, email: application.sender, name: application.name })">
+				</td>
+				<!-- Kategoria -->
+				<td>{{application.category}}</td>
+				<!-- Saapumisaika -->
+				<td>{{application.timestamp | date:'dd.MM.yyyy klo HH:mm'}}</td>
+				<!-- Hakemuksen otsikko -->
+				<td>
+					<a href="/hakemus/{{application.id}}">{{application.subject}}</a>
+					<div>
+						<small><em>
+							<i class="glyphicon glyphicon-paperclip"></i>
+							{{application.attachments.length}} kpl
+						</em></small>
+					</div>
+				</td>
+				<!-- Hakijan nimi -->
+				<td>
+					{{application.name}}
+					<div>
+						<small><em>{{application.sender}}</em></small>
+					</div>
+				</td>
+				<!-- Haettu pesti -->
+				<td>
+					{{application.job_alias}}
+				</td>
+				<!-- Onko vastattu -->
+				<td class="text-center">
+					<div ng-show="application.replysent">
+   	 				<span class="glyphicon glyphicon-ok green" tooltip="Vastattu"></span>
+  				</div>
+
+					<div ng-show="!application.replysent">
+   	 				<span class="glyphicon glyphicon-remove red" tooltip="Ei vastattu"></span>
+  				</div>
+				</td>
+				<!-- Pikapainikkeet -->
+				<td>
+					<button type="button" class="btn btn-default" ng-click="openNotes(application.id)" tooltip="Avaa hakemuksen muistiinpanot" ng-show="user.master"><i class="glyphicon glyphicon-pencil"></i></button>
+					<button type="button" class="btn btn-default" data-toggle="collapse" data-target="#drawer{{application.id}}" tooltip="Näytä hakemuksen tagit"><i class="glyphicon glyphicon-tags"></i></button>			
+				</td>
+			</tr>
+
+			<!-- Tagien piilorivi -->
+			<tr id="drawer{{application.id}}" class="collapse drawers">
+				<td colspan="7" class="text-muted">Tagit: 
+					<span ng-repeat="tag in application.tags">{{tag}}{{$last ? "" : ", "}}
+					</span>
+				</td>
+			</tr>
+
+	</tbody>
+</table>
+
+<!-- sivutuksen controlli, eli millä sivulla ollaan, sivunvaihdon painikkeet..  -->
+<dir-pagination-controls boundary-links="true" class="pagination" on-page-change="pageChangeHandler(newPageNumber)" template-url="/views/dirPagination.tpl.html">
+</dir-pagination-controls>
+Hakemuksia sivulla:
+<a href="" ng-click="changePageSize(10)">10</a>
+<a href="" ng-click="changePageSize(25)">25</a>
+<a href="" ng-click="changePageSize(50)">50</a>
+<a href="" ng-click="changePageSize(100)">100</a>
+
+<!-- Sivun alapalkki -->
+<nav class="navbar navbar-fixed-bottom">
+	<div class="jumbotron jumbotron-footer">
+		<div class="row">
+
+			<!-- Alapalkin ensimmäinen sarake -->
+			<div class="col-xs-3" ng-show="user.master">  
+				<form>
+					<div class="btn-group dropup">
+				    	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" 
+				    	ng-init="selectedCategory = { category: 'Kategoria'}">{{selectedCategory.category}}
+				      	<span class="caret"></span>
+				    	</button>
+
+				    	<ul class="dropdown-menu" role="menu">
+				      	<li ng-repeat="category in change_categories">
+									<a role="menuitem" href="" ng-click="setCategory(category)">{{category.category}}</a>
+								</li>
+				    	</ul>
+					</div>
+					<input type="button" class="btn btn-primary" value="Vaihda kategoria" ng-click="changeCategory()">
+		            <i class="fa fa-spinner fa-spin" ng-show="changeCategory_loading"></i>
+				</form>
+			</div>
+
+			<!-- Alapalkin toinen sarake -->
+			<div class="col-xs-3">
+				<!-- Filtteröi taulukosta hakijan, eli lähettäjän sähköpostin perusteella -->
+				<input type="text" placeholder="Suodata" ng-model="table_filter" class="form-control">
+				
+			</div>
+
+			<!-- Alapalkin kolmas sarake -->
+			<div class="col-xs-2">
+				<div class="btn-group pull-right">
+					<button class="btn btn-default" ng-show="user.master" ng-click="deleteSelected()"> Poista valitut ({{selected.length}}kpl)</button>
+				</div>
+			</div>
+
+			<!-- Alapalkin neljäs sarake -->
+			<div class="col-xs-4">
+				<div class="btn-group">
+					<!-- Näyttää valittujen hakemusten tagirivin -->
+					<button class="btn btn-default" type="button" data-toggle="collapse" data-target=".drawers">Näytä kaikki tagirivit</button>
+					<!-- Valituille vastaus -->
+					<a class="btn btn-primary" href="#/vastaa" ng-show="user.master"> Vastaa valituille ({{selected.length}}kpl)</a>
+				</div>
+			</div> 
+
+    </div>
+	</div>
+</nav>
+
+<!-- Tässä näytetään alertit, kun niitä tulee -->
+<div class="alert_container" ng-repeat="alert in alerts">
+	<alert type="{{alert.type}}">{{alert.msg}}</alert>
+</div>
+
+

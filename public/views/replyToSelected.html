@@ -1,0 +1,107 @@
+<!--
+Tämä tiedosto on lisensoitu Creative Commons BY-NC-ND 4.0 -lisenssillä. 
+Tarkastele käyttölupaa osoitteessa http://creativecommons.org/licenses/by-nc-nd/4.0/
+
+Kooditiedoston tekijä: Mikko Nieminen
+Viimeisimmät muutokset: Mikko Nieminen 2.12.2014, Heikki Känä 28.10.2014, Tuomas Kunnamo 12.12.2014
+
+Sähköpostin lähetysnäkymä. Tänne siirrytään esim. etusivun listasta vastausviestin lähetystä varten
+-->
+
+<div class="jumbotron container-fluid">
+  <div class="row-fluid">
+    <h3>Vastaa valituille hakemuksille</h3>
+
+    <!-- Lista valituista hakemuksista -->
+    <div class="col-md-4">
+      <h4 class="selectedApplications">Vastaanottajat ({{selected.length}}):</h4>
+      <table class="table table-bordered">
+        <tbody>
+          <tr ng-repeat="applic in selected" class="selected-item">
+            <td>{{applic.name}}, {{applic.email}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Vastauskenttä -->
+    <div class="col-md-8">
+
+      <div class="btn-group dropdown">
+        <button type="button" class="btn btn-default dropdown-toggle">
+          {{selectedMailTemplateTitle}}
+          <span class="caret"></span>
+        </button>
+
+        <ul class="dropdown-menu" role="menu">
+
+          <li ng-repeat='res in mailtemplates'>
+            <a role="menuitem" href="" ng-click='showMailTemplate(res)'>{{res.title}}</a>
+          </li>
+
+        </ul>
+      </div>
+
+      <!-- Sähköpostin otsikko -->
+      <div class="row input-margin">
+        <div class="col-sm-12 input-margin">
+          <label>Sähköpostin otsikko </label>
+          <input class="form-control" ng-model="selectedMailTemplateSubject" style="width:100%" maxlength="100">
+        </div>
+      </div >
+
+      <h3>Vastausviesti</h3>
+      <!--  Kokeillaan ilman textangularia <div text-angular ng-model="htmlVariable"></div>-->
+      <div class="form-group">
+        <textarea class="form-control" rows="15" placeholder="Sähköpostiviesti" ng-model='mail_body' maxlength="4000"></textarea>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-6 text-left">
+
+          <a class="btn btn-default" href="#/vastaa" ng-click='updateEmailTemplate(selectedMailTemplate)'>
+            Tallenna muutokset pohjaan
+          </a>
+
+          <i class="fa fa-spinner fa-spin" ng-show="updateEmailTemplate_loading"></i>
+
+          <span ng-show="updateEmailTemplate_success">
+            <span class="glyphicon glyphicon-ok"></span>
+            {{updateEmailTemplate_status}}
+          </span>
+          <span ng-show="updateEmailTemplate_failure">
+            <span class="glyphicon glyphicon-remove"></span>
+            {{updateEmailTemplate_status}}
+          </span>
+        </div>
+
+        <div class="col-xs-6 text-right">
+          <a class="btn btn-primary" href="#/vastaa" ng-click='sendMail()'>
+            Lähetä
+          </a>
+
+          <i class="fa fa-spinner fa-spin" ng-show="sendMail_loading"></i>
+
+          <span ng-show="sendMail_success">
+            <span class="glyphicon glyphicon-ok"></span>
+            {{changeMail_status}}
+          </span>
+          <span ng-show="sendMail_failure">
+            <span class="glyphicon glyphicon-remove"></span>
+            {{changeMail_status}}
+          </span>
+
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+</div>
+
+<!-- Tässä näytetään alertit, kun niitä tulee -->
+<div class="alert_container" ng-repeat="alert in alerts">
+  <alert type="{{alert.type}}">{{alert.msg}}</alert>
+</div>

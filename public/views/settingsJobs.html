@@ -1,0 +1,103 @@
+<!--
+Tämä tiedosto on lisensoitu Creative Commons BY-NC-ND 4.0 -lisenssillä. 
+Tarkastele käyttölupaa osoitteessa http://creativecommons.org/licenses/by-nc-nd/4.0/
+
+Kooditiedoston tekijä: Mikko Nieminen
+Viimeisimmät muutokset: Mikko Nieminen 2.12.2014, Eero Vornanen 13.12.2014
+
+Tämä on pestihallintasivun näkymä
+-->
+
+<div class="jumbotron text-center">
+  <h2>Pestit</h2>
+</div>
+
+<div class="container">
+  <div class="row">
+
+    <!-- Vasen sarake -->
+    <div class="col-sm-5">
+      <h2>Pestit</h2>
+      <!-- Lista pesteistä -->
+      <table class="table table-hover">
+        <thead>
+          <th>
+            Sähköpostiosoite
+          </th>
+          <th>
+            Alias
+          </th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="job in jobs | orderBy:'email'"  ng-click="showJob(job)">
+            <td>
+              {{job.email}}
+            </td>
+            <td>
+              {{job.alias}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+    <!-- Välipalkki -->
+    <div class="col-sm-1">
+    </div>
+
+    <!-- Oikea sarake, pestiin liittyvien sähköpostiosoitteiden container -->
+    <div class="col-sm-6">
+      <!-- Pestin muokkauskenttä -->
+      <div class="row">
+        <h2>Pestin tiedot</h2>
+        <form class="input-margin">
+          <label for="job_email">Pesti</label>
+          <input id="job_email" type="text" class="form-control input-margin" placeholder="Pestin sähköpostiosoite" ng-model='job.email' ng-init="job.email=''" readonly>
+          
+          <label for="job_alias">Pestin alias</label>
+          <input id="job_alias" type="text" class="form-control input-margin" placeholder="Pestin alias" ng-model='job.alias' ng-init="job.alias=''">
+
+          <button type='button' class="btn btn-primary input-margin pull-right" ng-click='editAlias(job)'>Tallenna alias</button>
+
+          <i class="fa fa-spinner fa-spin" ng-show="changeAlias_loading"></i>
+
+          <span ng-show="changeAlias_success">
+            <span class="glyphicon glyphicon-ok"></span>
+            Pestin alias vaihdettu
+          </span>
+          <span ng-show="changeAlias_failure">
+            <span class="glyphicon glyphicon-remove"></span>
+            Aliaksen vaihto epäonnistui
+          </span>
+        </form>
+      </div>
+
+      <div class="row">
+        <form>
+          <label for="job_autoreply">Pestin {{job.email}} automaattivastaus</label>
+          <textarea id="job_autoreply" class="form-control input-margin" rows="15"placeholder="Pestin automaattivastaus" ng-model='job.autoreply'></textarea>
+
+          <button type='button' class="btn btn-primary pull-right input-margin" ng-click='editAutoreply(job)'>Tallenna automaattivastaus</button>
+
+          <i class="fa fa-spinner fa-spin" ng-show="changeAutoreply_loading"></i>
+
+          <span ng-show="changeAutoreply_success">
+            <span class="glyphicon glyphicon-ok"></span>
+            Pestin automaattivastaus vaihdettu
+          </span>
+          <span ng-show="changeAutoreply_failure">
+            <span class="glyphicon glyphicon-remove"></span>
+            Automaattivastauksen vaihto epäonnistui
+          </span>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Tässä näytetään alertit, kun niitä tulee -->
+<div class="alert_container" ng-repeat="alert in alerts">
+  <alert type="{{alert.type}}">{{alert.msg}}</alert>
+</div>
